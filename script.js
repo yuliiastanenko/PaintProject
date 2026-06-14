@@ -1,12 +1,17 @@
 const inputNumber = document.getElementById("number");
 const inputColor = document.getElementById("color");
+const inputWidth = document.getElementById("width");
+const inputHeight = document.getElementById("height");
 
 const section = document.querySelector("section");
 
 function createSquare() {
   const square = document.createElement("div");
-  square.style.width = "50px";
-  square.style.height = "50px";
+  const sizeWidth = inputWidth.value + "px";
+  const sizeHeight = inputHeight.value + "px";
+  square.style.width = sizeWidth;
+  square.style.height = sizeHeight;
+
   square.style.background = inputColor.value;
   return square;
 }
