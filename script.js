@@ -19,10 +19,20 @@ function createSquare() {
     const left = document.createElement("button");
     left.innerText = "←";
     left.classList.add("left");
+       left.onclick = function () {
+        if (square.previousElementSibling !== null) {
+            square.previousElementSibling.before(square);
+        }
+    }
 
     const right = document.createElement("button");
     right.innerText = "→";
     right.classList.add("right");
+    right.onclick = function() {
+        if (square.nextElementSibling !== null) {
+            square.nextElementSibling.after(square);
+        }
+    }
 
     const up = document.createElement("button");
     up.innerText = "↑";
