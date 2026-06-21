@@ -5,7 +5,7 @@ section {
     padding: 30px;
 
     div {
-        position: relative;
+        position: absolute;
 
         button {
             border: none;

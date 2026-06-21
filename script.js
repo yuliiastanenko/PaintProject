@@ -5,12 +5,35 @@ const inputHeight = document.getElementById("height");
 
 const section = document.querySelector("section");
 
+let block = [];
+let memory = localStorage.getItem("key");
+if (memory) {
+    block = JSON.parse(memory);
+    for (let i = 0; i < block.length; i++) {
+        const item = renderSquare(block[i]);
+        section.append(item);
+    }
+}
+
 function createSquare() {
+    const squareState = {
+        top: Math.random() * (window.innerHeight - inputHeight.value - 20),
+        left: Math.random() * (window.innerWidth - inputWidth.value - 20),
+        width: inputWidth.value,
+        height: inputHeight.value,
+        color: inputColor.value,
+    };
+    block.push(squareState);
+    localStorage.setItem("key", JSON.stringify(block));
+    return renderSquare(squareState);
+}
+
+function renderSquare(squareState) {
     const square = document.createElement("div");
-    const sizeWidth = inputWidth.value + "px";
-    const sizeHeight = inputHeight.value + "px";
-    square.style.width = sizeWidth;
-    square.style.height = sizeHeight;
+    square.style.top = squareState.top + "px";
+    square.style.left = squareState.left + "px";
+    square.style.width = squareState.width + "px";
+    square.style.height = squareState.height + "px";
 
     const cross = document.createElement("button");
     cross.innerText = "❌";
@@ -19,32 +42,39 @@ function createSquare() {
     const left = document.createElement("button");
     left.innerText = "←";
     left.classList.add("left");
-       left.onclick = function () {
-        if (square.previousElementSibling !== null) {
-            square.previousElementSibling.before(square);
-        }
+    left.onclick = function () {
+        squareState.left--;
+        square.style.left = squareState.left + "px";
     }
 
     const right = document.createElement("button");
     right.innerText = "→";
     right.classList.add("right");
-    right.onclick = function() {
-        if (square.nextElementSibling !== null) {
-            square.nextElementSibling.after(square);
-        }
+    right.onclick = function () {
+        squareState.left++;
+        square.style.left = squareState.left + "px";
     }
 
     const up = document.createElement("button");
     up.innerText = "↑";
     up.classList.add("up");
+    up.classList.add("up");
+    up.onclick = function () {
+        squareState.top--;
+        square.style.top = squareState.top + "px";
+    }
 
     const down = document.createElement("button");
     down.innerText = "↓";
     down.classList.add("down");
+    down.onclick = function () {
+        squareState.top++;
+        square.style.top = squareState.top + "px";
+    }
 
     square.append(down, left, right, up, cross);
 
-    square.style.background = inputColor.value;
+    square.style.background = squareState.color;
     cross.onclick = function () {
         square.remove();
     }
