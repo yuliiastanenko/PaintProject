@@ -2,6 +2,7 @@ const inputNumber = document.getElementById("number");
 const inputColor = document.getElementById("color");
 const inputWidth = document.getElementById("width");
 const inputHeight = document.getElementById("height");
+const buttonDelete = document.getElementById("delete");
 
 const section = document.querySelector("section");
 
@@ -44,6 +45,7 @@ function renderSquare(squareState) {
     left.classList.add("left");
     left.onclick = function () {
         squareState.left--;
+        localStorage.setItem("key", JSON.stringify(block));
         square.style.left = squareState.left + "px";
     }
 
@@ -52,6 +54,7 @@ function renderSquare(squareState) {
     right.classList.add("right");
     right.onclick = function () {
         squareState.left++;
+        localStorage.setItem("key", JSON.stringify(block));
         square.style.left = squareState.left + "px";
     }
 
@@ -61,6 +64,7 @@ function renderSquare(squareState) {
     up.classList.add("up");
     up.onclick = function () {
         squareState.top--;
+        localStorage.setItem("key", JSON.stringify(block));
         square.style.top = squareState.top + "px";
     }
 
@@ -69,7 +73,14 @@ function renderSquare(squareState) {
     down.classList.add("down");
     down.onclick = function () {
         squareState.top++;
+        localStorage.setItem("key", JSON.stringify(block));
         square.style.top = squareState.top + "px";
+    }
+
+    buttonDelete.onclick = function() {
+        section.innerHTML = "";
+        block = [];
+        localStorage.removeItem("key"); 
     }
 
     square.append(down, left, right, up, cross);
