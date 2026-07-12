@@ -3,15 +3,38 @@ const inputColor = document.getElementById("color");
 const inputWidth = document.getElementById("width");
 const inputHeight = document.getElementById("height");
 const buttonDelete = document.getElementById("delete");
+const checkbox = document.getElementById("close");
 
+checkbox.checked = JSON.parse(localStorage.getItem("presizionState"));
 const section = document.querySelector("section");
 
-let block = [];
+const menuHeader = document.querySelector("header");
+const menuCheckbox = document.getElementById("menu");
+const menuState = JSON.parse(localStorage.getItem("menuState"));
+
+menuCheckbox.checked = menuState;
+toggleMenu(menuState);
+
+let blocks = [];
 let memory = localStorage.getItem("key");
 if (memory) {
-    block = JSON.parse(memory);
-    for (let i = 0; i < block.length; i++) {
-        const item = renderSquare(block[i]);
+    blocks = JSON.parse(memory);
+    for (let i = 0; i < blocks.length; i++) {
+        const item = renderSquare(blocks[i]);
+        section.append(item);
+    }
+}
+
+menuCheckbox.onchange = function (event) {
+    localStorage.setItem("menuState", event.target.checked);
+    toggleMenu(event.target.checked);
+}
+
+checkbox.onchange = function (event) {
+    localStorage.setItem("presizionState", event.target.checked);
+    section.innerHTML = "";
+    for (let i = 0; i < blocks.length; i++) {
+        const item = renderSquare(blocks[i]);
         section.append(item);
     }
 }
@@ -24,9 +47,17 @@ function createSquare() {
         height: inputHeight.value,
         color: inputColor.value,
     };
-    block.push(squareState);
-    localStorage.setItem("key", JSON.stringify(block));
+    blocks.push(squareState);
+    localStorage.setItem("key", JSON.stringify(blocks));
     return renderSquare(squareState);
+}
+
+function toggleMenu(isHidden) {
+    if (isHidden) {
+        menuHeader.setAttribute("hidden", "");
+    } else {
+        menuHeader.removeAttribute("hidden");
+    }
 }
 
 function renderSquare(squareState) {
@@ -40,21 +71,28 @@ function renderSquare(squareState) {
     cross.innerText = "❌";
     cross.classList.add("close");
 
+    let event = "onclick";
+    if (checkbox.checked) {
+        event = "onclick";
+    } else {
+        event = "onmousemove";
+    }
+
     const left = document.createElement("button");
     left.innerText = "←";
     left.classList.add("left");
-    left.onclick = function () {
+    left[event] = function () {
         squareState.left--;
-        localStorage.setItem("key", JSON.stringify(block));
+        localStorage.setItem("key", JSON.stringify(blocks));
         square.style.left = squareState.left + "px";
     }
 
     const right = document.createElement("button");
     right.innerText = "→";
     right.classList.add("right");
-    right.onclick = function () {
+    right[event] = function () {
         squareState.left++;
-        localStorage.setItem("key", JSON.stringify(block));
+        localStorage.setItem("key", JSON.stringify(blocks));
         square.style.left = squareState.left + "px";
     }
 
@@ -62,25 +100,26 @@ function renderSquare(squareState) {
     up.innerText = "↑";
     up.classList.add("up");
     up.classList.add("up");
-    up.onclick = function () {
+
+    up[event] = function () {
         squareState.top--;
-        localStorage.setItem("key", JSON.stringify(block));
+        localStorage.setItem("key", JSON.stringify(blocks));
         square.style.top = squareState.top + "px";
     }
 
     const down = document.createElement("button");
     down.innerText = "↓";
     down.classList.add("down");
-    down.onclick = function () {
+    down[event] = function () {
         squareState.top++;
-        localStorage.setItem("key", JSON.stringify(block));
+        localStorage.setItem("key", JSON.stringify(blocks));
         square.style.top = squareState.top + "px";
     }
 
-    buttonDelete.onclick = function() {
+    buttonDelete.onclick = function () {
         section.innerHTML = "";
-        block = [];
-        localStorage.removeItem("key"); 
+        blocks = [];
+        localStorage.removeItem("key");
     }
 
     square.append(down, left, right, up, cross);
@@ -88,6 +127,10 @@ function renderSquare(squareState) {
     square.style.background = squareState.color;
     cross.onclick = function () {
         square.remove();
+        const indexOfElementToDelete = blocks.findIndex(element => squareState == element);
+        console.log(indexOfElementToDelete);
+        blocks.splice(indexOfElementToDelete, 1);
+        localStorage.setItem("key", JSON.stringify(blocks));
     }
     return square;
 }
